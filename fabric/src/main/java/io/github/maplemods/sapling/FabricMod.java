@@ -6,6 +6,6 @@ public class FabricMod implements ModInitializer {
     
     @Override
     public void onInitialize() {
-        CommonClass.init();
+        CommonMod.init();
     }
 }

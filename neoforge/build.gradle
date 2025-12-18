@@ -40,4 +40,9 @@ neoForge {
     }
 }
 
+dependencies {
+    implementation "mysticdrew:common-networking-neoforge:${common_networking_version}-${minecraft_version}"
+    jarJar("mysticdrew:common-networking-neoforge:${common_networking_version}-${minecraft_version}")
+}
+
 sourceSets.main.resources { srcDir 'src/generated/resources' }

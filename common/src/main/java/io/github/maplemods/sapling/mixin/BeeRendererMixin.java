@@ -2,6 +2,7 @@ package io.github.maplemods.sapling.mixin;
 
 import io.github.maplemods.sapling.data.Textures;
 import io.github.maplemods.sapling.functions.RandomFunctions;
+import io.github.maplemods.sapling.functions.TextureFunctions;
 import net.minecraft.client.renderer.entity.BeeRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Bee;
@@ -10,6 +11,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.UUID;
 
 @Mixin(BeeRenderer.class)
 public class BeeRendererMixin {
@@ -20,9 +23,14 @@ public class BeeRendererMixin {
             return;
         }
 
-        ResourceLocation baseResourceLocation = RandomFunctions.getRandomBeeTexture(Textures.beeTexturePairs);
+        UUID beeUUID = bee.getUUID();
+
+        ResourceLocation baseResourceLocation = TextureFunctions.getCachedEntityTexture(beeUUID);
         if (baseResourceLocation == null) {
-            return;
+            baseResourceLocation = RandomFunctions.getRandomBeeTexture(Textures.beeTexturePairs);
+            if (baseResourceLocation == null) {
+                return;
+            }
         }
 
         ResourceLocation beeResourceLocation;

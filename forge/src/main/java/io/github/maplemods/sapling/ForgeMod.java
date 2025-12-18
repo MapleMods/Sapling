@@ -8,6 +8,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class ForgeMod {
 
     public ForgeMod(FMLJavaModLoadingContext modLoadingContext) {
-        CommonClass.init();
+        CommonMod.init();
     }
 }

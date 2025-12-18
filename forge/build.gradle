@@ -3,17 +3,29 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
+repositories {
+    maven {url "https://jm.gserv.me/repository/maven-public/" }
+}
 base {
-    archivesName = "${mod_name}-forge-${minecraft_version}"
+    archivesName = "${mod_id}-forge-${minecraft_version}"
 }
 mixin {
     config("${mod_id}.mixins.json")
     config("${mod_id}.forge.mixins.json")
 }
 jar {
+    archiveClassifier = 'slim'
     manifest {
         attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.forge.mixins.json"
     }
+}
+
+jarJar.enable()
+
+tasks.assemble.dependsOn(tasks.jarJar)
+
+tasks.jarJar.configure {
+	archiveClassifier = ''
 }
 
 minecraft {
@@ -77,6 +89,9 @@ dependencies {
 
     // Forge's hack fix
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
+
+    implementation "mysticdrew:common-networking-forge:${common_networking_version}-${minecraft_version}"
+    jarJar(group: 'mysticdrew', name: 'common-networking-forge', version: "[${common_networking_version}-${minecraft_version}]")
 }
 
 publishing {

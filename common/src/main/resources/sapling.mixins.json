@@ -4,7 +4,9 @@
   "package": "io.github.maplemods.sapling.mixin",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "BeeMixin"
+  ],
   "client": [
     "BeeRendererMixin"
   ],

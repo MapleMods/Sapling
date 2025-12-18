@@ -9,6 +9,6 @@ import net.neoforged.fml.common.Mod;
 public class NeoForgeMod {
 
     public NeoForgeMod(IEventBus eventBus) {
-        CommonClass.init();
+        CommonMod.init();
     }
 }
