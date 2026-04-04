@@ -1,6 +1,6 @@
 # Sapling
 
-Minecraft 1.21.11 | Version 2.1
+Minecraft 1.21.11 | Version 2.2
 
 Download the mod here! :)
 
