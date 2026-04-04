@@ -10,7 +10,9 @@
     "chicken.ChickenRendererMixin",
     "chicken.ChickenRenderStateMixin",
     "creeper.CreeperRendererMixin",
-    "creeper.CreeperRenderStateMixin"
+    "creeper.CreeperRenderStateMixin",
+    "rabbit.RabbitRendererMixin",
+    "rabbit.RabbitRenderStateMixin"
   ],
   "server": [],
   "injectors": {

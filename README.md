@@ -1,9 +1,9 @@
 # Sapling
 
-Minecraft 26.1.1 | Version 2.1
+Minecraft 26.1.1 | Version 2.2
 
 Download the mod here! :)
 
-CurseForge: https://legacy.curseforge.com/minecraft/mc-mods/sapling
+CurseForge: https://curseforge.com/minecraft/mc-mods/sapling
 
 Modrinth: https://modrinth.com/mod/sapling
