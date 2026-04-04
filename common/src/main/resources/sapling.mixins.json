@@ -8,7 +8,8 @@
   "client": [
     "bee.BeeRendererMixin",
     "chicken.ChickenRendererMixin",
-    "creeper.CreeperRendererMixin"
+    "creeper.CreeperRendererMixin",
+    "rabbit.RabbitRendererMixin"
   ],
   "server": [],
   "injectors": {
