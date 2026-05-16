@@ -1,6 +1,6 @@
 # Sapling
 
-Minecraft 26.1.2 | Version 2.4
+Minecraft 26.1.2 | Version 2.5
 
 Download the mod here! :)
 

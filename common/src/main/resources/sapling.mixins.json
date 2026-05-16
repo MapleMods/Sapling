@@ -13,6 +13,8 @@
     "creeper.CreeperRenderStateMixin",
     "frog.FrogRendererMixin",
     "frog.FrogRenderStateMixin",
+    "parrot.ParrotRendererMixin",
+    "parrot.ParrotRenderStateMixin",
     "rabbit.RabbitRendererMixin",
     "rabbit.RabbitRenderStateMixin"
   ],

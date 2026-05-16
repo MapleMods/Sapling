@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class RabbitRendererMixin {
 
 	@Inject(method = "extractRenderState(Lnet/minecraft/world/entity/animal/rabbit/Rabbit;Lnet/minecraft/client/renderer/entity/state/RabbitRenderState;F)V", at = @At("TAIL"))
-	private void sapling$attachChicken(Rabbit rabbit, RabbitRenderState state, float partialTicks, CallbackInfo ci) {
+	private void sapling$attachRabbit(Rabbit rabbit, RabbitRenderState state, float partialTicks, CallbackInfo ci) {
 		((EntityRenderStateExt) state).sapling$setEntity(rabbit);
 	}
 
