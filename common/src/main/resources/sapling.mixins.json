@@ -10,6 +10,7 @@
     "chicken.ChickenRendererMixin",
     "creeper.CreeperRendererMixin",
     "frog.FrogRendererMixin",
+    "parrot.ParrotRendererMixin",
     "rabbit.RabbitRendererMixin"
   ],
   "server": [],
