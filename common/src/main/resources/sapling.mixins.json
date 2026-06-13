@@ -15,6 +15,8 @@
     "frog.FrogRenderStateMixin",
     "parrot.ParrotRendererMixin",
     "parrot.ParrotRenderStateMixin",
+    "pig.PigRendererMixin",
+    "pig.PigRenderStateMixin",
     "rabbit.RabbitRendererMixin",
     "rabbit.RabbitRenderStateMixin"
   ],
