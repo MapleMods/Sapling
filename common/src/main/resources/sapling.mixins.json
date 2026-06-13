@@ -11,6 +11,7 @@
     "creeper.CreeperRendererMixin",
     "frog.FrogRendererMixin",
     "parrot.ParrotRendererMixin",
+    "pig.PigRendererMixin",
     "rabbit.RabbitRendererMixin"
   ],
   "server": [],
