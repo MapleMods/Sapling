@@ -12,7 +12,7 @@ import java.util.Set;
 public class Constants {
 	public static final String MOD_ID = "sapling";
 	public static final String MOD_NAME = "Sapling";
-	public static final String MOD_VERSION = "2.5";
+	public static final String MOD_VERSION = "2.6";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
 	public static final RandomSource randomSource = RandomSource.create();

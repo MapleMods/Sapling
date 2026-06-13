@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class FrogRendererMixin {
 
 	@Inject(method = "extractRenderState(Lnet/minecraft/world/entity/animal/frog/Frog;Lnet/minecraft/client/renderer/entity/state/FrogRenderState;F)V", at = @At("TAIL"))
-	private void sapling$attachChicken(Frog frog, FrogRenderState state, float partialTicks, CallbackInfo ci) {
+	private void sapling$attachFrog(Frog frog, FrogRenderState state, float partialTicks, CallbackInfo ci) {
 		((EntityRenderStateExt) state).sapling$setEntity(frog);
 	}
 
