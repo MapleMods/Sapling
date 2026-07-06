@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.maplemods.sapling.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "bee.BeeRendererMixin",
+    "bee.BeeRenderStateMixin",
+    "chicken.ChickenRendererMixin",
+    "chicken.ChickenRenderStateMixin",
+    "creeper.CreeperRendererMixin",
+    "creeper.CreeperRenderStateMixin",
+    "frog.FrogRendererMixin",
+    "frog.FrogRenderStateMixin",
+    "parrot.ParrotRendererMixin",
+    "parrot.ParrotRenderStateMixin",
+    "pig.PigRendererMixin",
+    "pig.PigRenderStateMixin",
+    "rabbit.RabbitRendererMixin",
+    "rabbit.RabbitRenderStateMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+
