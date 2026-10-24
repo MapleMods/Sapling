@@ -11,6 +11,9 @@ public class ConfigHandler {
 	public boolean disableSeasonsDuringHoliday;
 	public boolean nameTagPreventsTextureChange;
 
+	// Null until a player sets it; until then the collections decide (Textures.replacesModdedTextures)
+	public Boolean replaceModdedTextures = null;
+
 	public ConfigHandler() {
 		this.replaceSeasonalTextures = DEFAULT_REPLACE_SEASONAL_TEXTURES;
 		this.disableSeasonsDuringHoliday = DEFAULT_DISABLE_SEASONS_DURING_HOLIDAY;
