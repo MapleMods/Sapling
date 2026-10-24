@@ -2,6 +2,7 @@ package io.github.maplemods.sapling.functions;
 
 import commonnetwork.api.Dispatcher;
 import io.github.maplemods.sapling.config.ConfigHandler;
+import io.github.maplemods.sapling.data.CategoryDefaults;
 import io.github.maplemods.sapling.data.CategoryEntry;
 import io.github.maplemods.sapling.data.Constants;
 import io.github.maplemods.sapling.data.Textures;
@@ -73,7 +74,7 @@ public class EntityTextureFunctions {
 	private static List<CategoryEntry> buildSpawnPool(List<CategoryEntry> categories, ConfigHandler config, boolean expiredReassign) {
 		boolean hasActiveHoliday = categories.stream()
 				.filter(c -> !c.category.startsWith("_"))
-				.filter(c -> !Constants.SEASONAL_CATEGORIES.contains(c.category))
+				.filter(c -> CategoryDefaults.isHoliday(c.category))
 				.anyMatch(CategoryEntry::isDateActive);
 
 		return categories.stream()
@@ -83,7 +84,7 @@ public class EntityTextureFunctions {
 						return !expiredReassign;
 					}
 
-					boolean isSeasonal = Constants.SEASONAL_CATEGORIES.contains(c.category);
+					boolean isSeasonal = CategoryDefaults.isSeason(c.category);
 					boolean isHoliday = !isSeasonal;
 
 					// disableSeasonsDuringHoliday: if a holiday is active, skip seasonal categories
