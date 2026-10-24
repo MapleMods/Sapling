@@ -23,9 +23,13 @@ public class EntityRenderFunctions {
 			return null;
 		}
 
+		if (entity.getType() != entityType) {
+			return null;
+		}
+
 		UUID uuid = entity.getUUID();
 
-		Identifier identifier = TextureFunctions.getCachedEntityTexture(uuid);
+		Identifier identifier = TextureFunctions.getLegacyEntityTexture(uuid);
 		if (identifier == null) {
 			return null;
 		}
