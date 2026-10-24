@@ -38,13 +38,42 @@ public class CategoryDefaults {
         });
     }
 
+    private static final Map<String, MonthDay[]> REGISTERED_RANGES = new HashMap<>();
+    private static final Map<String, String> REGISTERED_KINDS = new HashMap<>();
+    private static final Map<String, String> REGISTERED_BY = new HashMap<>();
+
+    public static boolean register(String modId, String category, String kind, MonthDay from, MonthDay to) {
+        String key = category.toLowerCase();
+        if (REGISTERED_KINDS.containsKey(key)) {
+            MonthDay[] existing = REGISTERED_RANGES.get(key);
+            if (!REGISTERED_KINDS.get(key).equals(kind) || !existing[0].equals(from) || !existing[1].equals(to)) {
+                Constants.LOG.warn("[" + Constants.MOD_NAME + "] {} registers the category '{}' differently than {}, keeping the first.",
+                        modId, category, REGISTERED_BY.get(key));
+            }
+            return false;
+        }
+        REGISTERED_RANGES.put(key, new MonthDay[]{from, to});
+        REGISTERED_KINDS.put(key, kind);
+        REGISTERED_BY.put(key, modId);
+        return true;
+    }
+
     public static MonthDay getDateFrom(String category) {
-        MonthDay[] range = DATE_RANGES.get(category.toLowerCase());
+        MonthDay[] range = REGISTERED_RANGES.getOrDefault(category.toLowerCase(), DATE_RANGES.get(category.toLowerCase()));
         return range != null ? range[0] : CategoryEntry.defaultDateFrom();
     }
 
     public static MonthDay getDateTo(String category) {
-        MonthDay[] range = DATE_RANGES.get(category.toLowerCase());
+        MonthDay[] range = REGISTERED_RANGES.getOrDefault(category.toLowerCase(), DATE_RANGES.get(category.toLowerCase()));
         return range != null ? range[1] : CategoryEntry.defaultDateTo();
+    }
+
+    public static boolean isSeason(String category) {
+        String kind = REGISTERED_KINDS.get(category.toLowerCase());
+        return kind != null ? kind.equals("season") : Constants.SEASONAL_CATEGORIES.contains(category);
+    }
+
+    public static boolean isHoliday(String category) {
+        return !category.startsWith("_") && !isSeason(category) && !"theme".equals(REGISTERED_KINDS.get(category.toLowerCase()));
     }
 }
