@@ -3,6 +3,7 @@ package io.github.maplemods.sapling;
 import io.github.maplemods.sapling.data.Constants;
 import io.github.maplemods.sapling.forge.event.ForgeSaplingClientEvents;
 import io.github.maplemods.sapling.forge.event.ForgeSaplingEvents;
+import io.github.maplemods.sapling.functions.ConfigFunctions;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
@@ -21,6 +22,8 @@ public class ForgeMod {
     }
 
     private void loadComplete(final FMLLoadCompleteEvent event) {
+        ConfigFunctions.initConfigAtLaunch();
+
         ForgeSaplingEvents.registerEventsInBus();
 
         if (FMLEnvironment.dist.equals(Dist.CLIENT)) {

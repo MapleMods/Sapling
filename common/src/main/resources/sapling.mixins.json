@@ -5,24 +5,15 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "client": [
-    "bee.BeeRendererMixin",
-    "bee.BeeRenderStateMixin",
-    "chicken.ChickenRendererMixin",
-    "chicken.ChickenRenderStateMixin",
-    "creeper.CreeperRendererMixin",
-    "creeper.CreeperRenderStateMixin",
-    "frog.FrogRendererMixin",
-    "frog.FrogRenderStateMixin",
-    "parrot.ParrotRendererMixin",
-    "parrot.ParrotRenderStateMixin",
-    "pig.PigRendererMixin",
-    "pig.PigRenderStateMixin",
-    "rabbit.RabbitRendererMixin",
-    "rabbit.RabbitRenderStateMixin"
+    "base.LivingEntityRenderStateMixin",
+    "base.LivingEntityRendererMixin",
+    "engine.BreezeEyesLayerEngineMixin",
+    "engine.EyesLayerEngineMixin",
+    "engine.LivingEntityRendererEngineMixin",
+    "engine.RenderTypesEngineMixin"
   ],
   "server": [],
   "injectors": {
     "defaultRequire": 1
   }
 }
-

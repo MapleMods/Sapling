@@ -62,6 +62,9 @@ public class MapleModsCommand {
 						.then(Commands.literal("nameTagPreventsTextureChange")
 								.then(Commands.argument("value", BoolArgumentType.bool())
 										.executes(MapleModsCommand::executeSetNameTagPreventsTextureChange)))
+						.then(Commands.literal("replaceModdedTextures")
+								.then(Commands.argument("value", BoolArgumentType.bool())
+										.executes(MapleModsCommand::executeSetReplaceModdedTextures)))
 						.then(Commands.literal("_showCurrentValues")
 										.executes(MapleModsCommand::executeGetConfig)))
 				.then(Commands.literal("adminTools")
@@ -296,6 +299,24 @@ public class MapleModsCommand {
 		return 1;
 	}
 
+	private static int executeSetReplaceModdedTextures(CommandContext<CommandSourceStack> command) {
+		CommandSourceStack source = command.getSource();
+		EntityType<?> entityType = resolveEntityType(StringArgumentType.getString(command, "entityType"));
+		if (entityType == null) {
+			source.sendFailure(Component.literal("Unknown entity type."));
+			return 0;
+		}
+
+		boolean value = BoolArgumentType.getBool(command, "value");
+		ConfigHandler handler = Textures.entityConfigs.getOrDefault(entityType, new ConfigHandler());
+		handler.replaceModdedTextures = value;
+		Textures.entityConfigs.put(entityType, handler);
+
+		ConfigFunctions.writeTextureConfigFiles();
+		source.sendSuccess(() -> Component.literal("Set replaceModdedTextures to " + value + " for '" + BuiltInRegistries.ENTITY_TYPE.getKey(entityType).getPath() + "'.").withStyle(ChatFormatting.DARK_GREEN), true);
+		return 1;
+	}
+
 	private static int executeGetConfig(CommandContext<CommandSourceStack> command) {
 		CommandSourceStack source = command.getSource();
 		EntityType<?> entityType = resolveEntityType(StringArgumentType.getString(command, "entityType"));
@@ -311,6 +332,7 @@ public class MapleModsCommand {
 		source.sendSuccess(() -> Component.literal("  replaceSeasonalTextures: " + handler.replaceSeasonalTextures).withStyle(ChatFormatting.YELLOW), false);
 		source.sendSuccess(() -> Component.literal("  disableSeasonsDuringHoliday: " + handler.disableSeasonsDuringHoliday).withStyle(ChatFormatting.YELLOW), false);
 		source.sendSuccess(() -> Component.literal("  nameTagPreventsTextureChange: " + handler.nameTagPreventsTextureChange).withStyle(ChatFormatting.YELLOW), false);
+		source.sendSuccess(() -> Component.literal("  replaceModdedTextures: " + Textures.replacesModdedTextures(entityType)).withStyle(ChatFormatting.YELLOW), false);
 		return 1;
 	}
 

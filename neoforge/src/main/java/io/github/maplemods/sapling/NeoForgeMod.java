@@ -1,6 +1,7 @@
 package io.github.maplemods.sapling;
 
 import io.github.maplemods.sapling.data.Constants;
+import io.github.maplemods.sapling.functions.ConfigFunctions;
 import io.github.maplemods.sapling.neoforge.event.NeoForgeSaplingClientEvents;
 import io.github.maplemods.sapling.neoforge.event.NeoForgeSaplingEvents;
 import net.neoforged.api.distmarker.Dist;
@@ -20,6 +21,8 @@ public class NeoForgeMod {
     }
 
     private void loadComplete(final FMLLoadCompleteEvent event) {
+        ConfigFunctions.initConfigAtLaunch();
+
         NeoForge.EVENT_BUS.register(NeoForgeSaplingEvents.class);
 
         if (FMLEnvironment.getDist().equals(Dist.CLIENT)) {
