@@ -4,7 +4,9 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import commonnetwork.api.Dispatcher;
 import io.github.maplemods.sapling.config.ConfigHandler;
 import io.github.maplemods.sapling.data.CategoryEntry;
@@ -77,8 +79,30 @@ public class MapleModsCommand {
 
 		dispatcher.register(Commands.literal("maplemods")
 				.requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
+				.then(Commands.literal("category")
+						.then(categoryArgument(false)))
+				.then(Commands.literal("collection")
+						.then(Commands.argument("collection", StringArgumentType.string()).suggests(CommandSuggestions.COLLECTION_SUGGESTIONS)
+								.then(Commands.literal("enable")
+										.executes(command -> executeCollectionEnabled(command, true)))
+								.then(Commands.literal("disable")
+										.executes(command -> executeCollectionEnabled(command, false)))
+								.then(categoryArgument(true))))
 				.then(entityTypeArg)
 		);
+	}
+
+	private static RequiredArgumentBuilder<CommandSourceStack, String> categoryArgument(boolean inCollection) {
+		SuggestionProvider<CommandSourceStack> suggestions = inCollection ? CommandSuggestions.COLLECTION_CATEGORY_SUGGESTIONS : CommandSuggestions.ALL_CATEGORY_SUGGESTIONS;
+		return Commands.argument("category", StringArgumentType.string()).suggests(suggestions)
+				.then(Commands.literal("enable")
+						.executes(command -> executeGroupEnabled(command, inCollection, true)))
+				.then(Commands.literal("disable")
+						.executes(command -> executeGroupEnabled(command, inCollection, false)))
+				.then(Commands.literal("setDate")
+						.then(Commands.argument("from", StringArgumentType.string()).suggests(CommandSuggestions.GROUP_DATE_FROM_SUGGESTIONS)
+								.then(Commands.argument("to", StringArgumentType.string()).suggests(CommandSuggestions.GROUP_DATE_TO_SUGGESTIONS)
+										.executes(command -> executeGroupSetDate(command, inCollection)))));
 	}
 
 	// --- Texture commands ---
@@ -240,6 +264,90 @@ public class MapleModsCommand {
 
 		ConfigFunctions.writeTextureConfigFiles();
 		source.sendSuccess(() -> Component.literal("Set date range of '" + categoryName + "' to " + fromStr + " - " + toStr + ".").withStyle(ChatFormatting.DARK_GREEN), true);
+		return 1;
+	}
+
+	private static int executeGroupEnabled(CommandContext<CommandSourceStack> command, boolean inCollection, boolean enabled) {
+		CommandSourceStack source = command.getSource();
+		String categoryName = StringArgumentType.getString(command, "category");
+		String modId = inCollection ? StringArgumentType.getString(command, "collection") : null;
+
+		List<EntityType<?>> entityTypes = entityTypesWith(categoryName, modId);
+		if (entityTypes.isEmpty()) {
+			source.sendFailure(Component.literal(noMobsWith(categoryName, modId)));
+			return 0;
+		}
+
+		int textureCount = 0;
+		for (EntityType<?> entityType : entityTypes) {
+			textureCount += setCategoryEnabled(entityType, categoryName, modId, enabled);
+		}
+
+		ConfigFunctions.writeTextureConfigFiles();
+		String message = (enabled ? "Enabled" : "Disabled") + " '" + categoryName + "'" + collectionSuffix(modId) + " for " + entityTypes.size() + " mob(s), " + textureCount + " texture(s).";
+		source.sendSuccess(() -> Component.literal(message).withStyle(ChatFormatting.DARK_GREEN), true);
+		return 1;
+	}
+
+	private static int executeGroupSetDate(CommandContext<CommandSourceStack> command, boolean inCollection) {
+		CommandSourceStack source = command.getSource();
+		String categoryName = StringArgumentType.getString(command, "category");
+		String modId = inCollection ? StringArgumentType.getString(command, "collection") : null;
+		String fromStr = StringArgumentType.getString(command, "from");
+		String toStr = StringArgumentType.getString(command, "to");
+
+		MonthDay dateFrom;
+		MonthDay dateTo;
+		try {
+			dateFrom = MonthDay.parse(fromStr, Constants.DATE_FORMATTER);
+			dateTo = MonthDay.parse(toStr, Constants.DATE_FORMATTER);
+		} catch (DateTimeParseException e) {
+			source.sendFailure(Component.literal("Invalid date format. Use dd-MM, e.g. 01-12 for December 1st."));
+			return 0;
+		}
+
+		List<EntityType<?>> entityTypes = entityTypesWith(categoryName, modId);
+		if (entityTypes.isEmpty()) {
+			source.sendFailure(Component.literal(noMobsWith(categoryName, modId)));
+			return 0;
+		}
+
+		for (EntityType<?> entityType : entityTypes) {
+			List<CategoryEntry> categories = Textures.texturePairs.get(entityType);
+			CategoryEntry existing = findCategory(categories, categoryName);
+			replaceCategory(categories, existing, existing.withDateRange(dateFrom, dateTo));
+		}
+
+		ConfigFunctions.writeTextureConfigFiles();
+		String message = "Set date range of '" + categoryName + "'" + collectionSuffix(modId) + " to " + fromStr + " - " + toStr + " for " + entityTypes.size() + " mob(s).";
+		source.sendSuccess(() -> Component.literal(message).withStyle(ChatFormatting.DARK_GREEN), true);
+		return 1;
+	}
+
+	private static int executeCollectionEnabled(CommandContext<CommandSourceStack> command, boolean enabled) {
+		CommandSourceStack source = command.getSource();
+		String modId = StringArgumentType.getString(command, "collection");
+
+		int textureCount = 0;
+		Set<EntityType<?>> entityTypes = new HashSet<>();
+		for (Map.Entry<EntityType<?>, List<CategoryEntry>> pair : Textures.texturePairs.entrySet()) {
+			for (CategoryEntry category : pair.getValue()) {
+				int changed = setCategoryEnabled(pair.getKey(), category.category, modId, enabled);
+				if (changed > 0) {
+					textureCount += changed;
+					entityTypes.add(pair.getKey());
+				}
+			}
+		}
+
+		if (entityTypes.isEmpty()) {
+			source.sendFailure(Component.literal("No textures from '" + modId + "'."));
+			return 0;
+		}
+
+		ConfigFunctions.writeTextureConfigFiles();
+		String message = (enabled ? "Enabled" : "Disabled") + " " + modId + " for " + entityTypes.size() + " mob(s), " + textureCount + " texture(s).";
+		source.sendSuccess(() -> Component.literal(message).withStyle(ChatFormatting.DARK_GREEN), true);
 		return 1;
 	}
 
@@ -450,6 +558,10 @@ public class MapleModsCommand {
 	// --- Helpers ---
 
 	private static int setCategoryEnabled(EntityType<?> entityType, String categoryName, boolean enabled) {
+		return setCategoryEnabled(entityType, categoryName, null, enabled);
+	}
+
+	private static int setCategoryEnabled(EntityType<?> entityType, String categoryName, String modId, boolean enabled) {
 		List<CategoryEntry> categories = Textures.texturePairs.get(entityType);
 		if (categories == null) return 0;
 
@@ -462,12 +574,44 @@ public class MapleModsCommand {
 		int count = 0;
 		for (int i = 0; i < category.textures.size(); i++) {
 			TextureEntry entry = category.textures.get(i);
+			if (modId != null && !entry.modId.equals(modId)) {
+				continue;
+			}
 			double defaultWeight = getDefaultWeight(entityType, entry.identifier);
 			double weight = enabled ? (defaultWeight < 0 ? entry.weight : defaultWeight) : entry.weight;
 			category.textures.set(i, entry.withEnabled(enabled).withWeight(weight));
 			count++;
 		}
 		return count;
+	}
+
+	private static List<EntityType<?>> entityTypesWith(String categoryName, String modId) {
+		List<EntityType<?>> found = new ArrayList<>();
+		for (Map.Entry<EntityType<?>, List<CategoryEntry>> pair : Textures.texturePairs.entrySet()) {
+			CategoryEntry category = findCategory(pair.getValue(), categoryName);
+			if (category != null && (modId == null || category.textures.stream().anyMatch(e -> e.modId.equals(modId)))) {
+				found.add(pair.getKey());
+			}
+		}
+		return found;
+	}
+
+	private static CategoryEntry findCategory(List<CategoryEntry> categories, String categoryName) {
+		return categories.stream()
+				.filter(c -> c.category.equals(categoryName))
+				.findFirst()
+				.orElse(null);
+	}
+
+	private static String collectionSuffix(String modId) {
+		return modId == null ? "" : " of " + modId;
+	}
+
+	private static String noMobsWith(String categoryName, String modId) {
+		if (modId == null) {
+			return "No mob has the category '" + categoryName + "'.";
+		}
+		return "No mob has textures from '" + modId + "' in the category '" + categoryName + "'.";
 	}
 
 	public static EntityType<?> resolveEntityType(String entityTypeId) {
