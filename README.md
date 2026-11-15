@@ -1,6 +1,6 @@
 # Sapling
 
-Minecraft 1.21.1 | Version 3.2
+Minecraft 1.21.1 | Version 3.3
 
 Download the mod here! :)
 
