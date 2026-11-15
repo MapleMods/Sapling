@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(RenderTypes.class)
 public class RenderTypesEngineMixin {
 
-	@ModifyVariable(method = {"entityCutout", "entityCutoutCull", "entityCutoutDissolve", "entityCutoutZOffset", "entitySolid", "entitySolidZOffsetForward", "entityTranslucent", "entityTranslucentCullItemTarget", "entityTranslucentEmissive", "outline"}, at = @At("HEAD"), argsOnly = true, ordinal = 0)
+	@ModifyVariable(method = {"armorCutoutNoCull", "entityCutout", "entityCutoutCull", "entityCutoutDissolve", "entityCutoutZOffset", "entitySolid", "entitySolidZOffsetForward", "entityTranslucent", "entityTranslucentCullItemTarget", "entityTranslucentEmissive", "outline"}, at = @At("HEAD"), argsOnly = true, ordinal = 0)
 	private static Identifier sapling$engineLayer(Identifier texture) {
 		return TextureEngine.remapLayer(texture);
 	}
